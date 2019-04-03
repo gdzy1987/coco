@@ -330,6 +330,8 @@ class InteractiveServer:
 
     def get_user_assets_and_update(self, cache_policy='1'):
         assets = app_service.get_user_assets(self.client.user, cache_policy=cache_policy)
+        for asset in assets:
+            print('Asset: {}, actions: {}'.format(asset, asset.actions))
         assets = self.filter_system_users(assets)
         self.__class__._user_assets_cached[self.client.user.id] = assets
         self.load_user_assets_from_cache()

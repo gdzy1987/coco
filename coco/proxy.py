@@ -43,6 +43,15 @@ class ProxyServer:
         self.system_user.password = password
         self.system_user.private_key = private_key
 
+    def check_asset_actions(self):
+        if not self.asset.has_connect_actions:
+            msg = 'Administrators do not want you to ' \
+                  'remotely connect assets <{}>'.format(self.asset)
+            self.client.send_unicode(warning(wr(msg, before=0, after=1)))
+            return False
+        else:
+            return True
+
     def check_protocol(self):
         if self.asset.protocol != self.system_user.protocol:
             msg = 'System user <{}> and asset <{}> protocol are inconsistent.'.format(
@@ -61,6 +70,9 @@ class ProxyServer:
         return False
 
     def proxy(self):
+        if not self.check_asset_actions():
+            return
+
         if not self.check_protocol():
             return
         self.get_system_user_username_if_need()
