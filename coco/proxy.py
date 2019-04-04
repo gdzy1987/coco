@@ -43,8 +43,11 @@ class ProxyServer:
         self.system_user.password = password
         self.system_user.private_key = private_key
 
-    def check_asset_actions(self):
-        if not self.asset.has_connect_actions:
+    def check_actions(self):
+        """
+        校验资产是否允许远程连接
+        """
+        if not self.asset.allow_connect:
             msg = 'Administrators do not want you to ' \
                   'remotely connect assets <{}>'.format(self.asset)
             self.client.send_unicode(warning(wr(msg, before=0, after=1)))
@@ -70,7 +73,7 @@ class ProxyServer:
         return False
 
     def proxy(self):
-        if not self.check_asset_actions():
+        if not self.check_actions():
             return
 
         if not self.check_protocol():
